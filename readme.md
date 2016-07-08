@@ -34,8 +34,6 @@ Websockets are more like a *phone call*. You have the ability to hold a conversa
 
 ###Setup
 
-This all
-
 `cd` into `starter-code` and `bower install`. We have Angular, Firebase, and AngularFire as our dependencies.
 
 ###Writing Data
@@ -144,7 +142,7 @@ function foodCtrl($scope, $firebaseArray) {
 </details>
 
 <details>
-<summary>How can we send our food model to the backend when the form is subitted? Hint: your `$firebaseArray` has a `.$add` method on it.</summary>
+<summary>How can we send our food model to the backend when the form is submitted? Hint: your `$firebaseArray` has a `.$add` method on it.</summary>
 
 ```js
   $scope.addFood = function() {
@@ -167,7 +165,7 @@ function foodCtrl($scope, $firebaseArray) {
 </details>
 
 <details>
-<summary>How can we modify the `addFood` function so that the form is cleared after it is submited?</summary>
+<summary>How can we modify the `addFood` function so that the form is cleared after it is submitted?</summary>
 
 ```js
   $scope.addFood = function() {
