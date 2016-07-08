@@ -8,16 +8,16 @@ By the end of this lesson you will be able to:
 * Explain the difference between HTTP and Websocket protocols
 * Integrate AngularFire into an Angular app
 * Deploy your app to Firebase Hosting
-* Implement 3-way data binding
+* Implement 3-way data binding!
 
 
 ##Firebase Intro
 
-[Firebase](https://www.firebase.com/) is a Platform as a Service (PaaS) that provides a graphical interface to set up a back end, both the database and api.
+[Firebase](https://firebase.google.com/) is a Platform as a Service (PaaS) that provides a graphical interface to set up a back end, both the database and api.
 
-We will be using the [AngularFire](https://www.firebase.com/docs/web/libraries/angular/guide/intro-to-angularfire.html) library to access Firebase from Angular. Google owns Firebase and developed Angular, so they work nicely together.
+We will be using the [AngularFire](https://github.com/firebase/angularfire) library to access Firebase from Angular. Google owns Firebase and developed Angular, so they work nicely together.
 
-Let's take a look at this demo [Tetris Game](https://www.firebase.com/tutorial/#session/gf3bu09wvlf) to see how it can allow us to build real-time applications.
+Let's take a look at this demo [Chat Room App](https://firechat.firebaseapp.com/) to see how it can allow us to build real-time applications.
 
 ###Websockets
 
@@ -34,37 +34,32 @@ Websockets are more like a *phone call*. You have the ability to hold a conversa
 
 ###Setup
 
-```bash
-bower install angular angularfire --save
-```
+This all
 
-```html
-<script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/firebase/firebase.js"></script>
-<script src="bower_components/angularfire/dist/angularfire.min.js"></script>
-```
+`cd` into `starter-code` and `bower install`. We have Angular, Firebase, and AngularFire as our dependencies.
 
-###Adding Data
+###Writing Data
 
 ```js
 // in JS console
-var ref = new Firebase('https://sf-wdi-29.firebaseio-demo.com/');
-firebaseRef.set({"WDI29": "Is learning Firebase"});
+var root = firebase.database().ref();
+var msgDB = root.child("messages");
+msgDB.set({"WDI29": "Is learning Firebase"});
 ```
 
 ```js
-ref.push({name: "<Your name>", message: "<Your message>"})
+msgDB.push({name: "<Your name>", message: "<Your message>"})
 ```
 
->What's the difference between `.set` and `.push`?
+>Take a moment to explore the difference between [`.set`](https://firebase.google.com/docs/reference/js/firebase.database.Reference#set) and [`.push`](https://firebase.google.com/docs/reference/js/firebase.database.Reference#push). How would you summarize it?
 
-###Fetching Data
+###Reading Data
 
 Using Firebase's native ability to handle web sockets, you trigger an event every time a child is added
 
 ```js
-ref.on('child_added', function(snapshot) {
-  console.log("new child:", snapshot.val());
+msgDB.on('child_added', function(snapshot) {
+  console.log("NEW CHILD ADDED:", snapshot.val());
 });
 ```
 
@@ -75,8 +70,8 @@ More on data event listeners to [retrieve data](https://www.firebase.com/docs/we
 ###Structuring Data
 
 ```js
-var usersRef = ref.child("users");
-usersRef.set({
+var usersDB = root.child("users");
+usersDB.set({
   alanisawesome: {
     date_of_birth: "June 23, 1912",
     full_name: "Alan Turing"
@@ -93,11 +88,11 @@ Now we can go to `https://sf-wdi-29.firebaseio-demo.com/users` and see the users
 We can overwrite each of our following users, which is similar to a `PUT`.
 
 ```js
-usersRef.child("alanisawesome").set({
+usersDB.child("alanisawesome").set({
   date_of_birth: "6/23/12",
   full_name: "Alan Turing"
 });
-usersRef.child("gracehop").set({
+usersDB.child("gracehop").set({
   date_of_birth: "12/9/06",
   full_name: "Grace Hopper"
 });
@@ -105,46 +100,39 @@ usersRef.child("gracehop").set({
 We can also just update an attribute, which is similar to a `PATCH`.
 
 ```js
-var hopperRef = usersRef.child("gracehop");
+var hopperRef = usersDB.child("gracehop");
 hopperRef.update({
   "nickname": "Amazing Grace"
 });
 ```
 
-##Rapid Prototyping
+##Rapid Prototype: ToEat.ly
 
-Let's take an app, ToEatly, that is a list of items we wish to eat in the future and build it out using Angular and Firebase.
+###Firebase + Angular
 
-###Integrating Angular
-
-Click the "Dashboard" link on firebase to navigate to `firebase.com/account` (signup for an account if you don't have one). Here you will see a list of your existing Firebase backend applications and be enabled to create a new one. Create a new one and note its name.
-
-`cd` into `starter-code` and let's start building out this application.
-
-<details>
-<summary>First we'll need to inject `firebase` as a dependency into our Angular application.</summary>
+First we'll need to inject `firebase` as a dependency into our Angular application.</summary>
 
 ```js
-var app = angular.module("ToEatly", ["firebase"]);
+  angular.module("ToEatly", ["firebase"]);
 ```
-</details>
 
-<details>
-<summary>Now we can inject `$firebaseObject`, `$firebaseArray`, and `$firebaseAuth` into any of our controllers to help us manage objects, collections, and authentication respectively. Since we're working with a collection of foods let's use a [`$firebaseArray`](https://www.firebase.com/docs/web/libraries/angular/guide/synchronized-arrays.html) to store them.
-</summary>
+Now we have the option of also using `$firebaseObject` or `$firebaseArray` into a controller to help us manage working with firebase objects or collections in angular. Since we're working with a collection of foods let's use a [`$firebaseArray`](https://github.com/firebase/angularfire/blob/master/docs/guide/synchronized-arrays.md) to store them.
 
 ```js
-app.controller("FoodCtrl", function($scope, $firebaseArray) {
+//...
+.controller("FoodCtrl", foodCtrl);
+	
+foodCtrl.$inject = ["$scope", "$firebaseArray"];
+function foodCtrl($scope, $firebaseArray) {
   // change to your application URL
-  var ref = new Firebase("https://sf-wdi-29.firebaseio.com/foods");
+  var ref = firebase.database().ref().child("foods");
   // create a synchronized array to store a collection
   $scope.foods = $firebaseArray(ref);
-});
+}
 ```
-</details>
 
 <details>
-<summary>In our html let's setup our view to use our angular app and controller. Then we can make a form that triggers an `addFood` function.</summary>
+<summary>How can we use a form to build up a `food` model with the attributes `name` and `yuminess` so that when it is submitted it triggers a function, `addFood`?</summary>
 
 ```html
 <form ng-submit="addFood()">
@@ -156,7 +144,7 @@ app.controller("FoodCtrl", function($scope, $firebaseArray) {
 </details>
 
 <details>
-<summary>Next let's create the `addFood` function to actually send the food to our Firebase backend. Hint: your `$firebaseArray` has a `.$add` method on it.</summary>
+<summary>How can we send our food model to the backend when the form is subitted? Hint: your `$firebaseArray` has a `.$add` method on it.</summary>
 
 ```js
   $scope.addFood = function() {
@@ -169,7 +157,7 @@ app.controller("FoodCtrl", function($scope, $firebaseArray) {
 </details>
 
 <details>
-<summary>If we want to view our changes on the page we should use an `ng-repeat`.</summary>
+<summary>How can we repeat all the foods on the page, so we see an index of them?</summary>
 
 ```html
 <div class="food" ng-repeat="food in foods">
@@ -193,13 +181,47 @@ app.controller("FoodCtrl", function($scope, $firebaseArray) {
 ```
 </details>
 
-###User Stories
+###Self Challenges
 
-Figure out the following user stories on your own. Example solutions are in `solution-code`. User can
+Figure out the following user stories on your own. Example solutions are in `solution-code`. User can...
 
 * Delete a food
 * Edit a food
 
-###Bonus
+##Creating your own Application
 
-* Deploy your app to [Firebase Hosting](https://www.firebase.com/docs/hosting/guide/deploying.html)
+###Setup
+
+Go to [Firebase's website](https://console.firebase.google.com/) and "Create a New Project" with any name you like. In your project, click on "Add Firebase to your web app" and copy the code, specific to your app, inside the second script tag. Along the lines of...
+
+###Config
+
+```js
+// Initialize Firebase
+var config = {
+	apiKey: "...",
+	authDomain: "...",
+	databaseURL: "...",
+	storageBucket: "",
+};
+firebase.initializeApp(config);
+```
+
+Make sure this configuration code is after the Firebase library but before the application's code.
+
+>Use the `solution-code` as an example.
+
+###Auth Rules
+
+By default, Firebase requires there to be some [authentication]() for all users. While that may be in nice the long run, in order to get a simple app running without auth, it can be turned off. After clicking on a specific project, navigate to the `database` tab; inside of there navigate to the `Rules` sub-tab and change it to the below code to not require authentication.
+
+```json
+{
+  "rules": {
+    ".read": "true",
+    ".write": "true"
+  }
+}
+```
+
+Finally, feel free to deploy an app to [Firebase Hosting](https://firebase.google.com/docs/hosting/)! 🔥
