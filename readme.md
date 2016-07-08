@@ -130,12 +130,12 @@ function foodCtrl($scope, $firebaseArray) {
 ```
 
 <details>
-<summary>How can we use a form to build up a `food` model with the attributes `name` and `yuminess` so that when it is submitted it triggers a function, `addFood`?</summary>
+<summary>How can we use a form to build up a `food` model with the attributes `name` and `yumminess` so that when it is submitted it triggers a function, `addFood`?</summary>
 
 ```html
 <form ng-submit="addFood()">
     <input placeholder="name" ng-model="food.name">
-    <input yuminess="yuminess" ng-model="food.yuminess">
+    <input yumminess="yumminess" ng-model="food.yumminess">
     <button type="submit">Eat me!</button>
 </form>
 ```
