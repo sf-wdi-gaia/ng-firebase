@@ -48,8 +48,8 @@ bower install angular angularfire --save
 
 ```js
 // in JS console
-var ref = new Firebase('https://sf-wdi-26.firebaseio-demo.com/');
-firebaseRef.set({"WDI26": "Is learning Firebase"});
+var ref = new Firebase('https://sf-wdi-29.firebaseio-demo.com/');
+firebaseRef.set({"WDI29": "Is learning Firebase"});
 ```
 
 ```js
@@ -88,7 +88,7 @@ usersRef.set({
 });
 ```
 
-Now we can go to `https://sf-wdi-26.firebaseio-demo.com/users` and see the users we just created.
+Now we can go to `https://sf-wdi-29.firebaseio-demo.com/users` and see the users we just created.
 
 We can overwrite each of our following users, which is similar to a `PUT`.
 
@@ -136,7 +136,7 @@ var app = angular.module("ToEatly", ["firebase"]);
 ```js
 app.controller("FoodCtrl", function($scope, $firebaseArray) {
   // change to your application URL
-  var ref = new Firebase("https://sf-wdi-26.firebaseio.com/foods");
+  var ref = new Firebase("https://sf-wdi-29.firebaseio.com/foods");
   // create a synchronized array to store a collection
   $scope.foods = $firebaseArray(ref);
 });

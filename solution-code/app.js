@@ -1,10 +1,15 @@
 // strict error checking
 'use strict';
 
-var app = angular.module("ToEatly", ["firebase"]);
-app.controller("FoodCtrl", function($scope, $firebaseArray) {
+angular
+  .module("ToEatly", ["firebase"])
+  .controller("FoodCtrl", foodCtrl);
+
+
+foodCtrl.$inject = ["$scope", "$firebaseArray"];
+function foodCtrl($scope, $firebaseArray) {
   // change to your application URL
-  var ref = new Firebase("https://sf-wdi-26.firebaseio.com/foods");
+  var ref = firebase.database().ref().child("foods");
   // create a synchronized array to store a collection
   $scope.foods = $firebaseArray(ref);
   // add new items to the array
@@ -17,4 +22,4 @@ app.controller("FoodCtrl", function($scope, $firebaseArray) {
     // clears form
     $scope.food = {};
   };
-});
+}

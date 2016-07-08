@@ -1,1 +1,5 @@
-//angular app here
+// strict error checking
+'use strict';
+
+angular
+  .module("ToEatly", []);
