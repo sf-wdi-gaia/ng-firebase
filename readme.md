@@ -81,8 +81,6 @@ usersDB.set({
 });
 ```
 
-Now we can go to `https://sf-wdi-29.firebaseio-demo.com/users` and see the users we just created.
-
 We can overwrite each of our following users, which is similar to a `PUT`.
 
 ```js
